@@ -21,4 +21,5 @@ spring:
 
 video:
   save-path: C:/Users/Tangs/Desktop/dd_uploads
+  result-path: C:/Users/Tangs/Desktop/dd_results
   max-size: 1073741824 # 1G

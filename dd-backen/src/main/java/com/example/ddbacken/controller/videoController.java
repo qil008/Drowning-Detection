@@ -2,9 +2,10 @@ package com.example.ddbacken.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.File;
 import java.util.*;
+import java.io.*;
 
 @RestController
 @RequestMapping("/video")
@@ -13,13 +14,16 @@ public class videoController {
     @Value("${video.save-path}")
     private String savePath;
 
+    @Value("${video.result-path}")
+    private String resultPath;
+
     @Value("${video.max-size}")
     private long maxFileSize;
 
-    @CrossOrigin(origins = "*", maxAge = 3600)
+    @CrossOrigin(origins = "*", maxAge = 10800)
     @PostMapping(value = "/upload")
     @ResponseBody
-    public Map<String, String> upload(@RequestParam("File") MultipartFile file) throws IllegalStateException {
+    public Map<String, String> upload(@RequestParam("file") MultipartFile file) throws IllegalStateException {
 
         Map<String, String> resultMap = new HashMap<>();
 
@@ -57,5 +61,30 @@ public class videoController {
             resultMap.put("message", "Internal server error.");
             return resultMap;
         }
+    }
+
+    @CrossOrigin(origins = "*", maxAge = 10800)
+    @GetMapping("/download/{path}")
+    public Map<String, String> download (@PathVariable("path") String path, HttpServletResponse response) {
+        Map<String, String> resultMap = new HashMap<>();
+        File file = new File(resultPath + "/" + path);
+        byte[] bytes = new byte[1024];
+        if (file.exists()) {
+            try (OutputStream os = response.getOutputStream();
+                 FileInputStream fis = new FileInputStream(file)) {
+                while ((fis.read(bytes)) != -1) {
+                    os.write(bytes);
+                    os.flush();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            resultMap.put("resCode", "200");
+            resultMap.put("message", "Completed.");
+        } else{
+            resultMap.put("resCode", "400");
+            resultMap.put("message", "File does not exist.");
+        }
+        return resultMap;
     }
 }
