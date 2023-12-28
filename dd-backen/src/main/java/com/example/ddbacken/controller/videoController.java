@@ -1,8 +1,10 @@
 package com.example.ddbacken.controller;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.ddbacken.service.VideoProcessingService;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.HttpServletResponse;
+
 
 import java.util.*;
 import java.io.*;
@@ -19,6 +21,9 @@ public class videoController {
 
     @Value("${video.max-size}")
     private long maxFileSize;
+
+    @Autowired
+    private VideoProcessingService videoProcessingService;
 
     @CrossOrigin(origins = "*", maxAge = 10800)
     @PostMapping(value = "/upload")
@@ -42,9 +47,18 @@ public class videoController {
 
                     file.transferTo(fileSave);
 
-                    resultMap.put("newVideoName", newVideoName);
-                    resultMap.put("resCode", "200");
-                    resultMap.put("VideoUrl", savePath + "/" + newVideoName);
+                    try {
+                        // Process the video using the service
+                        videoProcessingService.processVideo_py(newVideoName);
+                        resultMap.put("resCode", "200");
+                        resultMap.put("newVideoName", newVideoName);
+                        // Update resultMap if needed
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        resultMap.put("resCode", "500");
+                        resultMap.put("message", "Error processing video.");
+                    }
+
                 } else {
                     resultMap.put("resCode", "400");
                     resultMap.put("message", "Unsupported file type.");
