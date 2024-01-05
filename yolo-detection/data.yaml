@@ -1,0 +1,13 @@
+train: C:\Users\Tangs\Desktop\Drowning-Detection\Drowning-Detection\yolo-detection\train\images
+val: C:\Users\Tangs\Desktop\Drowning-Detection\Drowning-Detection\yolo-detection\valid\images
+test: C:\Users\Tangs\Desktop\Drowning-Detection\Drowning-Detection\yolo-detection\test\images
+
+nc: 3
+names: ['Drowning', 'Person out of water', 'Swimming']
+
+roboflow:
+  workspace: university-g3h71
+  project: swimming-and-drowning-detection
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/university-g3h71/swimming-and-drowning-detection/dataset/1
