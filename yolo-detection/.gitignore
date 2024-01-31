@@ -1,3 +1,6 @@
 /train/
 /test/
 /valid/
+/spatial_boxes_train/
+/train_raw/
+/captures/
